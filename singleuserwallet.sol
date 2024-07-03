@@ -9,8 +9,8 @@ contract singleuserwallet {
 //3. Implement the balanceOf() method to retreive the current balance in the wallet
 
 //Working
-1. The deposit function will load the ether into the smart contracts account
-2. when you transfer the ether, it will go from the smartcontract account and NOT from the actual walletaccount of the user.
+//1. The deposit function will load the ether into the smart contracts account
+//2. when you transfer the ether, it will go from the smartcontract account and NOT from the actual walletaccount of the user.
 
     address payable owner;
 
