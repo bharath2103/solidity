@@ -19,12 +19,12 @@ contract voting {
     //voter 2: 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
     //voter 3: 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB
 
-    Party[] parties;
+    Party[] public parties;
     Voter[] voters;
     address contractOwner;
-    mapping(string => int) public partyLookup;
+    mapping(string => uint) private partyLookup;
     bool pollingStart = false;
-    int n;
+    uint n;
 
     constructor() {
         contractOwner = msg.sender;
@@ -55,17 +55,30 @@ contract voting {
         _;
     }
 
-    function notRegisteredOrCastedVoteAlready(address _voter) view private returns (bool) {
-        for(uint i = 0; i <= voters.length; i++) {
-            if( voters[i].selfAddress == _voter && voters[i].vote != 0) {
-                return true;
+    function isRegistered(address _voter) view private returns (bool) {
+        for (uint i = 0; i < voters.length; i++) { // Correct loop condition
+            if (voters[i].selfAddress == _voter) {
+                return true; // Voter is registered
             }
-        } 
-        return false;   
+        }
+        return false; // Voter is not registered
     }
 
-    function vote() view public {
-        require(notRegisteredOrCastedVoteAlready(msg.sender) == true, "Voter is either not registered or has casted vote already");
+    function eligibleToVote(address _voter, string memory partyName) private returns (bool) {
+    for (uint i = 0; i < voters.length; i++) { // Correct loop condition
+        if (voters[i].selfAddress == _voter && voters[i].vote == 1) {
+            voters[i].vote -= 1;
+
+            parties[partyLookup[partyName]].receivedVote += 1;
+            return true;
+        }
+    }
+        return false;
+    }
+
+    function vote(string memory partyName) public {
+        require(isRegistered(msg.sender) == true, "Voter is not registered ");
+        require(eligibleToVote(msg.sender, partyName) == true, "Voter has casted vote already");
     }
 }
 
