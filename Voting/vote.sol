@@ -42,9 +42,23 @@ contract voting {
         pollingStart = true;
     }
 
-    function PollingStop() public onlyContractOwner {
+    function PollingStop() public onlyContractOwner returns (Party memory) {
+        string memory winningPartyName;
+        uint highestVotes = 0;
+
+        for (uint i = 0; i < parties.length; i++) {
+            if (parties[i].receivedVote > highestVotes) {
+                highestVotes = parties[i].receivedVote;
+                winningPartyName = parties[i].name;
+            }
+        }
+
         pollingStart = false;
+
+        // Create and return the Party object
+        return Party(winningPartyName, highestVotes); 
     }
+
 
     function voterRegistration(address voter) public onlyContractOwner {
         voters.push(Voter({selfAddress: voter, vote: 1}));
